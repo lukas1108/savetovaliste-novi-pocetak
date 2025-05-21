@@ -4,4 +4,5 @@ module artikli {
     requires javafx.base;
     requires java.sql;
     exports app;
+    exports app.gui;
 }
