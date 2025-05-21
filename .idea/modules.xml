@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/savetovaliste-novi-pocetak/JavaFX.iml" filepath="$PROJECT_DIR$/savetovaliste-novi-pocetak/JavaFX.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/savetovaliste-novi-pocetak.iml" filepath="$PROJECT_DIR$/.idea/savetovaliste-novi-pocetak.iml" />
     </modules>
   </component>

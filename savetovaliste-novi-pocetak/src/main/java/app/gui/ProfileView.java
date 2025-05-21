@@ -1,6 +1,7 @@
 package app.gui;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,8 +15,13 @@ public class ProfileView extends Application {
         Label nameLabel = new Label("Ime: Luka");
         Label surnameLabel = new Label("Prezime: Stoiljkovic");
         Label emailLabel = new Label("Email: luka@mail.com");
+        nameLabel.setStyle("-fx-font-size: 16px;");
+        surnameLabel.setStyle("-fx-font-size: 16px;");
+        emailLabel.setStyle("-fx-font-size: 16px;");
 
         Button backButton = new Button("Nazad");
+        backButton.setPrefWidth(150);
+        VBox.setMargin(backButton, new Insets(20, 0, 0, 0));
 
         backButton.setOnAction(e -> {
             TherapistDashboardView dashboard = new TherapistDashboardView();
@@ -27,10 +33,11 @@ public class ProfileView extends Application {
             }
         });
 
-        VBox layout = new VBox(10, nameLabel, surnameLabel, emailLabel, backButton);
-        layout.setStyle("-fx-padding: 30");
+        VBox layout = new VBox(15, nameLabel, surnameLabel, emailLabel, backButton);
+        layout.setStyle("-fx-padding: 40; -fx-alignment: center;");
 
-        Scene scene = new Scene(layout, 350, 200);
+        Scene scene = new Scene(layout, 450, 300);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Moj profil");
         stage.show();

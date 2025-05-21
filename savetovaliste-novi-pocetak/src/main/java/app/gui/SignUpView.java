@@ -27,15 +27,18 @@ public class SignUpView extends Application{
         Button signupButton = new Button("Registruj se");
         Button backButton = new Button("Nazad");
 
+        HBox buttonBox = new HBox(10, signupButton, backButton);
+        buttonBox.setStyle("-fx-alignment: center;");
+
         VBox layout = new VBox(10,
                 nameLabel, nameField,
                 surnameLabel, surnameField,
                 emailLabel, emailField,
                 passwordLabel, passwordField,
                 confirmPasswordLabel, confirmPasswordField,
-                new HBox(10, signupButton, backButton)
+                buttonBox
         );
-        layout.setStyle("-fx-padding: 20");
+        layout.setStyle("-fx-padding: 30; -fx-alignment: center;");
 
         signupButton.setOnAction(e -> {
             String name = nameField.getText();
@@ -69,6 +72,7 @@ public class SignUpView extends Application{
         });
 
         Scene scene = new Scene(layout, 350, 400);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Registracija");
         stage.show();

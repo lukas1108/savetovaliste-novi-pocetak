@@ -48,6 +48,7 @@ public class LoginView extends Application {
         layout.setStyle("-fx-padding: 30");
 
         Scene scene = new Scene(layout, 400, 250);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Login");
         stage.show();

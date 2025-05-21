@@ -9,12 +9,16 @@ public class PaymentView extends Application{
     @Override
     public void start(Stage stage) throws Exception {
         Label titleLabel = new Label("Uplate i dugovanja klijenata");
+        titleLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 
         TableView<String> paymentTable = new TableView<>();
         paymentTable.setPlaceholder(new Label("Nema podataka za prikaz."));
 
         // za sada samo dummy tekst
         ListView<String> payments = new ListView<>();
+        payments.setPrefHeight(200);
+        payments.setPrefWidth(450);
+
         payments.getItems().addAll(
                 "Anja Aprc – Dug: 2000 RSD",
                 "Lili Duolingo – Uplaćeno: 3000 RSD",
@@ -22,6 +26,8 @@ public class PaymentView extends Application{
         );
 
         Button backButton = new Button("Nazad");
+        backButton.setPrefWidth(150);
+        VBox.setMargin(backButton, new javafx.geometry.Insets(20, 0, 0, 0));
 
         backButton.setOnAction(e -> {
             TherapistDashboardView dashboard = new TherapistDashboardView();
@@ -33,10 +39,11 @@ public class PaymentView extends Application{
             }
         });
 
-        VBox layout = new VBox(15, titleLabel, payments, backButton);
-        layout.setStyle("-fx-padding: 30");
+        VBox layout = new VBox(20, titleLabel, payments, backButton);
+        layout.setStyle("-fx-padding: 30; -fx-alignment: center;");
 
-        Scene scene = new Scene(layout, 400, 300);
+        Scene scene = new Scene(layout, 600, 400);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Uplate i dugovanja");
         stage.show();

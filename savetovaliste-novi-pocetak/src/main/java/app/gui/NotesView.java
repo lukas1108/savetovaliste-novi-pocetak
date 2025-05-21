@@ -20,8 +20,16 @@ public class NotesView extends Application{
         notesArea.setPromptText("Unesi rezultate testa...");
         resultsArea.setPrefRowCount(4);
 
+        notesArea.setPrefWidth(500);
+        resultsArea.setPrefWidth(500);
+
         Button saveButton = new Button("Sačuvaj");
         Button backButton = new Button("Nazad");
+        saveButton.setPrefWidth(150);
+        backButton.setPrefWidth(150);
+
+        HBox buttonBox = new HBox(20, saveButton, backButton);
+        buttonBox.setStyle("-fx-alignment: center;");
 
         saveButton.setOnAction(e -> {
             // ovdje kasnije ubacimo logiku za cuvanje u bazu
@@ -38,17 +46,19 @@ public class NotesView extends Application{
             }
         });
 
-        VBox layout = new VBox(10,
+        VBox layout = new VBox(20,
                 sessionLabel,
                 new Label("Beleške:"),
                 notesArea,
                 new Label("Test rezultati:"),
                 resultsArea,
-                new HBox(10, saveButton, backButton)
+                buttonBox
         );
-        layout.setStyle("-fx-padding: 20");
+        layout.setStyle("-fx-padding: 30; -fx-alignment: center;");
 
-        Scene scene = new Scene(layout, 500, 400);
+
+        Scene scene = new Scene(layout, 650, 600);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Beleške i testovi");
         stage.show();
