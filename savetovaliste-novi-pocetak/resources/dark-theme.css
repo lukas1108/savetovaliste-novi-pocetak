@@ -1,0 +1,164 @@
+.root {
+    -fx-font-family: 'Roboto';
+    -fx-font-size: 16px;
+    -fx-background-color: linear-gradient(to bottom right, #1e1e2e, #2e2e3e);
+}
+
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #dddddd;
+}
+
+.text-field, .password-field {
+    -fx-background-color: #333;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 6 10;
+    -fx-border-color: #555;
+    -fx-border-width: 1;
+    -fx-pref-width: 250;
+}
+
+.button {
+    -fx-background-color: #4e8cff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 6 20;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #3a6ee8;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.dashboard-container {
+    -fx-background-color: #2c2f36;
+    -fx-padding: 40;
+    -fx-spacing: 25;
+    -fx-alignment: center;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
+}
+
+.dashboard-buttons {
+    -fx-alignment: center;
+    -fx-spacing: 30;
+}
+
+.dashboard-button-column {
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+.dashboard-buttons .button {
+    -fx-pref-width: 260;
+    -fx-pref-height: 44;
+    -fx-wrap-text: true;
+}
+
+.dashboard-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #eeeeee;
+}
+
+.dashboard-root {
+    -fx-background-color: linear-gradient(to bottom right, #1e1e2e, #2e2e3e);
+}
+
+.theme-toggle {
+    -fx-background-color: transparent;
+    -fx-text-fill: #666;
+    -fx-font-size: 12px;
+    -fx-underline: true;
+    -fx-cursor: hand;
+    -fx-padding: 4 10;
+}
+
+.theme-toggle:hover {
+    -fx-text-fill: #444;
+}
+
+.dashboard-header {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #7baeff;
+}
+
+.profile-card {
+    -fx-background-color: #2c2f36;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);
+    -fx-spacing: 15;
+    -fx-alignment: center;
+}
+
+.client-list {
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: transparent;
+    -fx-background-color: #3a3f47;
+    -fx-control-inner-background: #3a3f47;
+    -fx-text-fill: white;
+}
+
+.session-list {
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: transparent;
+    -fx-background-color: #3a3f47;
+    -fx-control-inner-background: #3a3f47;
+    -fx-text-fill: white;
+}
+
+.notes-card {
+    -fx-background-color: #2c2f36;
+    -fx-background-radius: 10;
+    -fx-spacing: 15;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
+}
+
+.notes-area {
+    -fx-control-inner-background: #3a3f47;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #444;
+}
+
+.publication-card {
+    -fx-background-color: #2c2f36;
+    -fx-background-radius: 10;
+    -fx-spacing: 20;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+}
+
+.publication-list {
+    -fx-background-color: #3a3f47;
+    -fx-control-inner-background: #3a3f47;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.payment-card {
+    -fx-background-color: #2c2f36;
+    -fx-background-radius: 10;
+    -fx-spacing: 20;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+}
+
+.payment-list {
+    -fx-background-color: #3a3f47;
+    -fx-control-inner-background: #3a3f47;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}

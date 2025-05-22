@@ -1,52 +1,63 @@
 package app.gui;
 
+import app.util.ThemeManager;
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class NotesView extends Application{
+public class NotesView extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        Label sessionLabel = new Label("Seansa: 21.05.2025 – Klijent: ");
+        // header
+        Label header = new Label("📝 Beleške i testovi");
+        header.setStyle("-fx-font-size: 20px; -fx-text-fill: #1976d2; -fx-font-weight: bold;");
 
+        // info
+        Label sessionLabel = new Label("Seansa: 21.05.2025 – Klijent: ");
+        sessionLabel.setStyle("-fx-font-size: 14px;");
+
+        // polja
         TextArea notesArea = new TextArea();
-        notesArea.setPromptText("Unesi beljeske sa seanse...");
+        notesArea.setPromptText("Unesi beleške sa seanse...");
         notesArea.setPrefRowCount(8);
+        notesArea.setPrefWidth(500);
+        notesArea.getStyleClass().add("notes-area");
 
         TextArea resultsArea = new TextArea();
-        notesArea.setPromptText("Unesi rezultate testa...");
+        resultsArea.setPromptText("Unesi rezultate testa...");
         resultsArea.setPrefRowCount(4);
-
-        notesArea.setPrefWidth(500);
         resultsArea.setPrefWidth(500);
+        resultsArea.getStyleClass().add("notes-area");
 
-        Button saveButton = new Button("Sačuvaj");
-        Button backButton = new Button("Nazad");
+        // dugmad
+        Button saveButton = new Button("💾 Sačuvaj");
+        Button backButton = new Button("⬅️ Nazad");
         saveButton.setPrefWidth(150);
         backButton.setPrefWidth(150);
 
         HBox buttonBox = new HBox(20, saveButton, backButton);
-        buttonBox.setStyle("-fx-alignment: center;");
+        buttonBox.setAlignment(Pos.CENTER);
 
-        saveButton.setOnAction(e -> {
-            // ovdje kasnije ubacimo logiku za cuvanje u bazu
-            showAlert(Alert.AlertType.INFORMATION, "Beleške i testovi sačuvani!");
-        });
+        saveButton.setOnAction(e -> showAlert(Alert.AlertType.INFORMATION, "Beleške i testovi sačuvani!"));
 
         backButton.setOnAction(e -> {
-            TherapistDashboardView dashboard = new TherapistDashboardView();
             try {
-                dashboard.start(new Stage());
+                new TherapistDashboardView().start(new Stage());
                 stage.close();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
-        VBox layout = new VBox(20,
+        // glavna kartica
+        VBox card = new VBox(15,
+                header,
                 sessionLabel,
                 new Label("Beleške:"),
                 notesArea,
@@ -54,15 +65,23 @@ public class NotesView extends Application{
                 resultsArea,
                 buttonBox
         );
-        layout.setStyle("-fx-padding: 30; -fx-alignment: center;");
+        card.setPadding(new Insets(30));
+        card.setAlignment(Pos.CENTER);
+        card.getStyleClass().add("notes-card");
 
+        VBox layout = new VBox(card);
+        layout.setAlignment(Pos.CENTER);
+        layout.setPadding(new Insets(40));
 
-        Scene scene = new Scene(layout, 650, 600);
-        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        Scene scene = new Scene(layout, 750, 620);
+        ThemeManager.applyTheme(scene);
+
         stage.setScene(scene);
         stage.setTitle("Beleške i testovi");
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/novi-pocetak-logo.png")));
         stage.show();
     }
+
     private void showAlert(Alert.AlertType type, String message) {
         Alert alert = new Alert(type);
         alert.setHeaderText(null);

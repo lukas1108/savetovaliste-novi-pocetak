@@ -1,15 +1,32 @@
 package app.gui;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
+import javafx.animation.ScaleTransition;
 
 public class LoginView extends Application {
     @Override
     public void start(Stage stage) {
+        // ucitaj logo
+        Image logoImage = new Image(getClass().getResourceAsStream("/novi-pocetak-logo.png"));
+        ImageView logoView = new ImageView(logoImage);
+        logoView.setFitWidth(150);
+        logoView.setPreserveRatio(true);
+
+        VBox logoBox = new VBox(logoView);
+        logoBox.setAlignment(Pos.CENTER);
+
+        // email i lozinka
         Label emailLabel = new Label("Email:");
         TextField emailField = new TextField();
         emailField.setMaxWidth(250);
@@ -18,43 +35,78 @@ public class LoginView extends Application {
         PasswordField passwordField = new PasswordField();
         passwordField.setMaxWidth(250);
 
+        // dugmad
         Button loginButton = new Button("Prijavi se");
-        loginButton.setOnAction(e -> {
-            TherapistDashboardView dashboard = new TherapistDashboardView();
-            try {
-                dashboard.start(new Stage()); // Otvori dashboard
-                stage.close();                // Zatvori login prozor
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
-
         Button goToSignupButton = new Button("Registruj se");
-        // Akcija za registraciju
-        goToSignupButton.setOnAction(e -> {
-            SignUpView singUpView = new SignUpView();
+
+        HBox buttonBox = new HBox(15, loginButton, goToSignupButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        // akcije
+        loginButton.setOnAction(e -> {
             try {
-                singUpView.start(new Stage());
+                new TherapistDashboardView().start(new Stage());
                 stage.close();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
-        // Horizontalan raspored dugmadi
-        HBox buttonBox = new HBox(10, loginButton, goToSignupButton);
+        goToSignupButton.setOnAction(e -> {
+            try {
+                new SignUpView().start(new Stage());
+                stage.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
-        VBox layout = new VBox(15, emailLabel, emailField, passwordLabel, passwordField, buttonBox);
-        layout.setStyle("-fx-padding: 30");
+        // glavni layout
+        VBox layout = new VBox(16,
+                logoBox,
+                emailLabel, emailField,
+                passwordLabel, passwordField,
+                buttonBox
+        );
+        layout.setStyle("-fx-padding: 40;");
+        layout.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(layout, 400, 250);
-        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        VBox.setMargin(buttonBox, new Insets(40, 0, 0, 0));
+
+        Scene scene = new Scene(layout, 400, 430);
+        app.util.ThemeManager.applyTheme(scene);
         stage.setScene(scene);
         stage.setTitle("Login");
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/novi-pocetak-logo.png")));
         stage.show();
+
+        FadeTransition fade = new FadeTransition(Duration.millis(600), layout);
+        fade.setFromValue(0);
+        fade.setToValue(1);
+        fade.play();
+        addHoverAnimation(loginButton);
+        addHoverAnimation(goToSignupButton);
     }
 
     public static void main(String[] args) {
         launch(args);
     }
+
+    private void addHoverAnimation(Button button) {
+        button.setOnMouseEntered(e -> {
+            ScaleTransition st = new ScaleTransition(Duration.millis(150), button);
+            st.setToX(1.05);
+            st.setToY(1.05);
+            st.play();
+        });
+        button.setOnMouseExited(e -> {
+            ScaleTransition st = new ScaleTransition(Duration.millis(150), button);
+            st.setToX(1.0);
+            st.setToY(1.0);
+            st.play();
+        });
+    }
+
 }
+
+

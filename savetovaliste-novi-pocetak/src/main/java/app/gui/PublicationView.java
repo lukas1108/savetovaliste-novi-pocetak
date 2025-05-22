@@ -1,58 +1,73 @@
 package app.gui;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-public class PublicationView extends Application{
+
+public class PublicationView extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        Label titleLabel = new Label("Objavljivanje podataka sa seansi");
-        titleLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        // header
+        Label header = new Label("📢 Objavljivanje podataka");
+        header.setStyle("-fx-font-size: 20px; -fx-text-fill: #1976d2; -fx-font-weight: bold;");
 
+        // lista
         ListView<String> publishedData = new ListView<>();
         publishedData.setPrefHeight(200);
-        publishedData.setPrefWidth(500);
-
+        publishedData.setMaxWidth(500);
         publishedData.getItems().addAll(
                 "Luka Stoiljkovic – 19.05.2025 – Objavljeno",
                 "Anja Aprcovic – 10.05.2025 – Nije objavljeno"
         );
+        publishedData.getStyleClass().add("publication-list");
 
-        Button publishButton = new Button("Objavi");
-        Button backButton = new Button("Nazad");
+        // dugmad
+        Button publishButton = new Button("✅ Objavi");
+        Button backButton = new Button("⬅️ Nazad");
         publishButton.setPrefWidth(150);
         backButton.setPrefWidth(150);
 
         HBox buttonBox = new HBox(20, publishButton, backButton);
-        buttonBox.setStyle("-fx-alignment: center;");
+        buttonBox.setAlignment(Pos.CENTER);
+        VBox.setMargin(buttonBox, new Insets(10, 0, 0, 0));
 
         publishButton.setOnAction(e -> {
-            // ovdje logika za azuriranje statusa u bazi
             showAlert(Alert.AlertType.INFORMATION, "Podaci su uspešno objavljeni!");
         });
 
         backButton.setOnAction(e -> {
-            TherapistDashboardView dashboard = new TherapistDashboardView();
             try {
-                dashboard.start(new Stage());
+                new TherapistDashboardView().start(new Stage());
                 stage.close();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
-        VBox layout = new VBox(20, titleLabel, publishedData, buttonBox);
-        layout.setStyle("-fx-padding: 30; -fx-alignment: center;");
+        // kartica
+        VBox card = new VBox(20, header, publishedData, buttonBox);
+        card.setAlignment(Pos.CENTER);
+        card.setPadding(new Insets(30));
+        card.getStyleClass().add("publication-card");
 
-        Scene scene = new Scene(layout, 650, 450);
-        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        VBox layout = new VBox(card);
+        layout.setAlignment(Pos.CENTER);
+        layout.setPadding(new Insets(40));
+
+        Scene scene = new Scene(layout, 700, 500);
+        app.util.ThemeManager.applyTheme(scene);
         stage.setScene(scene);
         stage.setTitle("Objavljivanje podataka");
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/novi-pocetak-logo.png")));
         stage.show();
     }
+
     private void showAlert(Alert.AlertType type, String message) {
         Alert alert = new Alert(type);
         alert.setHeaderText(null);

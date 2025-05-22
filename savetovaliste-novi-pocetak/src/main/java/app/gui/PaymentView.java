@@ -1,53 +1,64 @@
 package app.gui;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-public class PaymentView extends Application{
+
+public class PaymentView extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        Label titleLabel = new Label("Uplate i dugovanja klijenata");
-        titleLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        // naslov
+        Label titleLabel = new Label("💳 Uplate i dugovanja");
+        titleLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: #1976d2; -fx-font-weight: bold;");
 
-        TableView<String> paymentTable = new TableView<>();
-        paymentTable.setPlaceholder(new Label("Nema podataka za prikaz."));
-
-        // za sada samo dummy tekst
+        // lista uplata
         ListView<String> payments = new ListView<>();
         payments.setPrefHeight(200);
-        payments.setPrefWidth(450);
-
+        payments.setMaxWidth(500);
         payments.getItems().addAll(
                 "Anja Aprc – Dug: 2000 RSD",
                 "Lili Duolingo – Uplaćeno: 3000 RSD",
                 "RAAAAAAAAH – Dug: 0 RSD"
         );
+        payments.getStyleClass().add("payment-list");
 
-        Button backButton = new Button("Nazad");
-        backButton.setPrefWidth(150);
-        VBox.setMargin(backButton, new javafx.geometry.Insets(20, 0, 0, 0));
+        // dugme
+        Button backButton = new Button("⬅️ Nazad");
+        backButton.setPrefWidth(180);
+        VBox.setMargin(backButton, new Insets(20, 0, 0, 0));
 
         backButton.setOnAction(e -> {
-            TherapistDashboardView dashboard = new TherapistDashboardView();
             try {
-                dashboard.start(new Stage());
+                new TherapistDashboardView().start(new Stage());
                 stage.close();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
-        VBox layout = new VBox(20, titleLabel, payments, backButton);
-        layout.setStyle("-fx-padding: 30; -fx-alignment: center;");
+        // kartica
+        VBox card = new VBox(20, titleLabel, payments, backButton);
+        card.setAlignment(Pos.CENTER);
+        card.setPadding(new Insets(30));
+        card.getStyleClass().add("payment-card");
 
-        Scene scene = new Scene(layout, 600, 400);
-        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        VBox layout = new VBox(card);
+        layout.setAlignment(Pos.CENTER);
+        layout.setPadding(new Insets(40));
+
+        Scene scene = new Scene(layout, 700, 500);
+        app.util.ThemeManager.applyTheme(scene);
         stage.setScene(scene);
         stage.setTitle("Uplate i dugovanja");
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/novi-pocetak-logo.png")));
         stage.show();
     }
+
     public static void main(String[] args) {
         launch(args);
     }

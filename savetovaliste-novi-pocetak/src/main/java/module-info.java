@@ -5,4 +5,5 @@ module artikli {
     requires java.sql;
     exports app;
     exports app.gui;
+    exports app.util;
 }
