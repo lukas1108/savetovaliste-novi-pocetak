@@ -1,2 +1,18 @@
-/.idea/
+# Maven
+target/
+
+# IDEs
 *.iml
+.idea/
+*.class
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.swp
+*.bak

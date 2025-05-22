@@ -1,4 +1,4 @@
-package app;
+package app.start;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
     public static Connection connect() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/savetovaliste";
+        String url = "jdbc:mysql://localhost:3306/savetovalistenp";
         String user = "root";
         String password = ""; // ako si stavio lozinku u phpMyAdmin, unesi ovde
         return DriverManager.getConnection(url, user, password);

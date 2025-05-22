@@ -61,19 +61,31 @@ public class LoginView extends Application {
             }
         });
 
+        Label therapistLink = new Label("Lista psihoterapeuta");
+        therapistLink.setStyle("-fx-text-fill: #1976d2; -fx-underline: true; -fx-cursor: hand;");
+        therapistLink.setOnMouseClicked(e -> {
+            try {
+                new ListTherapistsView().start(stage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
         // glavni layout
         VBox layout = new VBox(16,
                 logoBox,
                 emailLabel, emailField,
                 passwordLabel, passwordField,
-                buttonBox
+                buttonBox, therapistLink
         );
         layout.setStyle("-fx-padding: 40;");
         layout.setAlignment(Pos.CENTER);
 
         VBox.setMargin(buttonBox, new Insets(40, 0, 0, 0));
 
-        Scene scene = new Scene(layout, 400, 430);
+
+
+        Scene scene = new Scene(layout, 400, 460);
         app.util.ThemeManager.applyTheme(scene);
         stage.setScene(scene);
         stage.setTitle("Login");

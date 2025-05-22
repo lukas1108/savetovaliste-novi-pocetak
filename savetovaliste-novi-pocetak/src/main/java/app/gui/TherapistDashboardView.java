@@ -39,9 +39,9 @@ public class TherapistDashboardView extends Application {
         Button profileButton = new Button("👤 Moj profil");
         Button clientsButton = new Button("🧑‍🤝‍🧑 Klijenti");
         Button sessionsButton = new Button("📅 Seanse");
-        Button notesButton = new Button("📝 Beleške i testovi");
+        //Button notesButton = new Button("📝 Beleške i testovi");
         Button paymentsButton = new Button("💸 Uplate i dugovanja");
-        Button publicationButton = new Button("📢 Objavljivanje podataka");
+        //Button publicationButton = new Button("📢 Objavljivanje podataka");
         Button logoutButton = new Button("🚪 Odjava");
         Button switchThemeButton = new Button("🎨 Promeni temu");
         switchThemeButton.setOnAction(e -> {
@@ -50,9 +50,15 @@ public class TherapistDashboardView extends Application {
         });
         switchThemeButton.getStyleClass().add("theme-toggle");
 
-        // raspored dugmadi
+        // raspored dugmadi STARI
+        /*
         VBox leftColumn = new VBox(10, profileButton, sessionsButton, publicationButton);
-        VBox rightColumn = new VBox(10, clientsButton, notesButton, paymentsButton);
+        VBox rightColumn = new VBox(10, clientsButton, notesButton, paymentsButton);*/
+
+        // raspored dugmadi
+        VBox leftColumn = new VBox(10, profileButton, sessionsButton);
+        VBox rightColumn = new VBox(10, clientsButton, paymentsButton);
+
         leftColumn.getStyleClass().add("dashboard-button-column");
         rightColumn.getStyleClass().add("dashboard-button-column");
 
@@ -83,9 +89,9 @@ public class TherapistDashboardView extends Application {
         profileButton.setOnAction(e -> openView(new ProfileView(), stage));
         clientsButton.setOnAction(e -> openView(new ClientListView(), stage));
         sessionsButton.setOnAction(e -> openView(new SessionListView(), stage));
-        notesButton.setOnAction(e -> openView(new NotesView(), stage));
+        //notesButton.setOnAction(e -> openView(new NotesView(), stage));
         paymentsButton.setOnAction(e -> openView(new PaymentView(), stage));
-        publicationButton.setOnAction(e -> openView(new PublicationView(), stage));
+        //publicationButton.setOnAction(e -> openView(new PublicationView(), stage));
         logoutButton.setOnAction(e -> {
             try {
                 new LoginView().start(new Stage());
@@ -95,9 +101,14 @@ public class TherapistDashboardView extends Application {
             }
         });
 
-        Button[] allButtons = {
+       /* Button[] allButtons = {
                 profileButton, clientsButton, sessionsButton, notesButton,
                 paymentsButton, publicationButton, logoutButton, switchThemeButton
+        };*/
+
+        Button[] allButtons = {
+                profileButton, clientsButton, sessionsButton,
+                paymentsButton, logoutButton, switchThemeButton
         };
 
         for (Button btn : allButtons) {

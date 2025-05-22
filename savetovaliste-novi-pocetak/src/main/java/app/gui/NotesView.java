@@ -48,7 +48,7 @@ public class NotesView extends Application {
 
         backButton.setOnAction(e -> {
             try {
-                new TherapistDashboardView().start(new Stage());
+                new SessionListView().start(new Stage());
                 stage.close();
             } catch (Exception ex) {
                 ex.printStackTrace();

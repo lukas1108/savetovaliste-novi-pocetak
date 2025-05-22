@@ -3,7 +3,11 @@ module artikli {
     requires javafx.graphics;
     requires javafx.base;
     requires java.sql;
-    exports app;
+    requires jakarta.persistence;
+    requires org.hibernate.orm.core;
     exports app.gui;
     exports app.util;
+    exports app.start;
+    exports app.model;
+    exports app.dao;
 }
