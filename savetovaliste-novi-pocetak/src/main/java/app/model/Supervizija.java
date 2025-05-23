@@ -51,6 +51,6 @@ public class Supervizija {
 
     @Override
     public String toString() {
-        return "Supervizija " + supervizijaId + ": " + pocetak + " - " + kraj;
+        return "Supervizija " + supervizijaId;
     }
 }

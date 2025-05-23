@@ -1,5 +1,7 @@
 package app.gui;
 
+import app.model.Osoba;
+import app.util.Session;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,9 +21,10 @@ public class TherapistDashboardView extends Application {
     public void start(Stage stage) {
         // ikonica aplikacije
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/novi-pocetak-logo.png")));
+        Osoba currentUser = Session.getCurrentUser();
 
-        // korisnički info (gore desno)
-        Label userLabel = new Label("👤 Luka Stoiljkovic");
+        // email korisnika (gore desno)
+        Label userLabel = new Label("👤 " + currentUser.getEmail());
         userLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #777;");
         HBox userInfoBox = new HBox(userLabel);
         userInfoBox.setAlignment(Pos.TOP_RIGHT);
@@ -32,16 +35,14 @@ public class TherapistDashboardView extends Application {
         headerLabel.getStyleClass().add("dashboard-header");
 
         // dobrodoslica
-        Label welcomeLabel = new Label("Dobrodošli, Luka");
+        Label welcomeLabel = new Label("Dobrodošli, " + currentUser.getIme() + " " + currentUser.getPrezime());
         welcomeLabel.getStyleClass().add("dashboard-title");
 
         // dugmad
         Button profileButton = new Button("👤 Moj profil");
         Button clientsButton = new Button("🧑‍🤝‍🧑 Klijenti");
         Button sessionsButton = new Button("📅 Seanse");
-        //Button notesButton = new Button("📝 Beleške i testovi");
         Button paymentsButton = new Button("💸 Uplate i dugovanja");
-        //Button publicationButton = new Button("📢 Objavljivanje podataka");
         Button logoutButton = new Button("🚪 Odjava");
         Button switchThemeButton = new Button("🎨 Promeni temu");
         switchThemeButton.setOnAction(e -> {
@@ -50,12 +51,7 @@ public class TherapistDashboardView extends Application {
         });
         switchThemeButton.getStyleClass().add("theme-toggle");
 
-        // raspored dugmadi STARI
-        /*
-        VBox leftColumn = new VBox(10, profileButton, sessionsButton, publicationButton);
-        VBox rightColumn = new VBox(10, clientsButton, notesButton, paymentsButton);*/
-
-        // raspored dugmadi
+        // raspored za dugmad
         VBox leftColumn = new VBox(10, profileButton, sessionsButton);
         VBox rightColumn = new VBox(10, clientsButton, paymentsButton);
 
@@ -67,6 +63,7 @@ public class TherapistDashboardView extends Application {
 
         VBox card = new VBox(20, headerLabel, welcomeLabel, buttonLayout, logoutButton, switchThemeButton);
         card.getStyleClass().add("dashboard-container");
+
 
         VBox.setMargin(logoutButton, new Insets(30, 0, 0, 0));
         logoutButton.setPrefWidth(220);
@@ -89,11 +86,11 @@ public class TherapistDashboardView extends Application {
         profileButton.setOnAction(e -> openView(new ProfileView(), stage));
         clientsButton.setOnAction(e -> openView(new ClientListView(), stage));
         sessionsButton.setOnAction(e -> openView(new SessionListView(), stage));
-        //notesButton.setOnAction(e -> openView(new NotesView(), stage));
         paymentsButton.setOnAction(e -> openView(new PaymentView(), stage));
-        //publicationButton.setOnAction(e -> openView(new PublicationView(), stage));
+
         logoutButton.setOnAction(e -> {
             try {
+                Session.clear();
                 new LoginView().start(new Stage());
                 stage.close();
             } catch (Exception ex) {
@@ -145,7 +142,4 @@ public class TherapistDashboardView extends Application {
         });
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

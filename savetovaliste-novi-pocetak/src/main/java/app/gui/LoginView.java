@@ -1,5 +1,8 @@
 package app.gui;
 
+import app.dao.OsobaDAO;
+import app.model.Osoba;
+import app.util.Session;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,15 +17,17 @@ import javafx.animation.FadeTransition;
 import javafx.util.Duration;
 import javafx.animation.ScaleTransition;
 
+import java.util.List;
+
 public class LoginView extends Application {
     @Override
     public void start(Stage stage) {
+
         // ucitaj logo
         Image logoImage = new Image(getClass().getResourceAsStream("/novi-pocetak-logo.png"));
         ImageView logoView = new ImageView(logoImage);
         logoView.setFitWidth(150);
         logoView.setPreserveRatio(true);
-
         VBox logoBox = new VBox(logoView);
         logoBox.setAlignment(Pos.CENTER);
 
@@ -35,7 +40,7 @@ public class LoginView extends Application {
         PasswordField passwordField = new PasswordField();
         passwordField.setMaxWidth(250);
 
-        // dugmad
+        // dugmici
         Button loginButton = new Button("Prijavi se");
         Button goToSignupButton = new Button("Registruj se");
 
@@ -44,14 +49,36 @@ public class LoginView extends Application {
 
         // akcije
         loginButton.setOnAction(e -> {
-            try {
-                new TherapistDashboardView().start(new Stage());
-                stage.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            // uzimanje unosa
+            String email = emailField.getText().trim();
+            String password = passwordField.getText();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Unesite i email i lozinku.");
+                return;
             }
+
+            OsobaDAO osobaDAO = new OsobaDAO();
+            List<Osoba> svi = osobaDAO.getAll();
+
+            // prolazi kroz sve korisnike i trazi unos koji se podudara
+            for (Osoba o : svi) {
+                if (o.getEmail() != null && o.getLozinka() != null && email.equalsIgnoreCase(o.getEmail()) && password.equals(o.getLozinka())) {
+                    Session.setCurrentUser(o); // zapamti ulogovanog korisnika
+                    try {
+                        new TherapistDashboardView().start(new Stage());
+                        stage.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return;
+                }
+            }
+
+            showAlert(Alert.AlertType.ERROR, "Pogrešan email ili lozinka.");
         });
 
+        // otvaranje sign up
         goToSignupButton.setOnAction(e -> {
             try {
                 new SignUpView().start(new Stage());
@@ -61,6 +88,7 @@ public class LoginView extends Application {
             }
         });
 
+        // lista psihoterapeuta, otvaranje prozora
         Label therapistLink = new Label("Lista psihoterapeuta");
         therapistLink.setStyle("-fx-text-fill: #1976d2; -fx-underline: true; -fx-cursor: hand;");
         therapistLink.setOnMouseClicked(e -> {
@@ -71,7 +99,7 @@ public class LoginView extends Application {
             }
         });
 
-        // glavni layout
+        // layout
         VBox layout = new VBox(16,
                 logoBox,
                 emailLabel, emailField,
@@ -83,7 +111,7 @@ public class LoginView extends Application {
 
         VBox.setMargin(buttonBox, new Insets(40, 0, 0, 0));
 
-
+        // stage i scene
 
         Scene scene = new Scene(layout, 400, 460);
         app.util.ThemeManager.applyTheme(scene);
@@ -100,10 +128,6 @@ public class LoginView extends Application {
         addHoverAnimation(goToSignupButton);
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     private void addHoverAnimation(Button button) {
         button.setOnMouseEntered(e -> {
             ScaleTransition st = new ScaleTransition(Duration.millis(150), button);
@@ -117,6 +141,14 @@ public class LoginView extends Application {
             st.setToY(1.0);
             st.play();
         });
+    }
+
+    private void showAlert(Alert.AlertType type, String poruka) {
+        Alert alert = new Alert(type);
+        alert.setTitle("Greška");
+        alert.setHeaderText(null);
+        alert.setContentText(poruka);
+        alert.showAndWait();
     }
 
 }

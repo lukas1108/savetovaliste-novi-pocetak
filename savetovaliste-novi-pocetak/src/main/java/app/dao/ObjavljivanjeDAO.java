@@ -9,6 +9,27 @@ import java.util.List;
 
 public class ObjavljivanjeDAO {
 
+    public int insertAndReturnId(Objavljivanje o) {
+        String sql = "{ CALL insert_objavljivanje(?, ?, ?, ?) }";
+
+        try (Connection conn = DatabaseConnection.connect();
+             CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setDate(1, o.getDatum());
+            cs.setString(2, o.getPrimalac());
+            cs.setString(3, o.getRazlogObjave());
+            cs.registerOutParameter(4, Types.INTEGER);
+
+            cs.execute();
+
+            return cs.getInt(4); // povratni ID
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
     public Objavljivanje getById(int id) {
         String sql = "SELECT * FROM objavljivanje WHERE objava_id = ?";
         try (Connection conn = DatabaseConnection.connect();

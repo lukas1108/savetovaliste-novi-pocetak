@@ -1,5 +1,8 @@
 package app.gui;
 
+import app.dao.PsiholoskiTestDAO;
+import app.model.PsiholoskiTest;
+import app.model.Seansa;
 import app.util.ThemeManager;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -11,31 +14,44 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 public class NotesView extends Application {
+
     @Override
-    public void start(Stage stage) throws Exception {
-        // header
+    public void start(Stage stage) {
+        // trenutna seansa
+        Seansa seansa = SessionListView.selectedSeansa;
+        if (seansa == null) return;
+
         Label header = new Label("📝 Beleške i testovi");
         header.setStyle("-fx-font-size: 20px; -fx-text-fill: #1976d2; -fx-font-weight: bold;");
 
-        // info
-        Label sessionLabel = new Label("Seansa: 21.05.2025 – Klijent: ");
+        Label sessionLabel = new Label("Seansa: " + seansa.getDatum() + " – ID: " + seansa.getSeansaId());
         sessionLabel.setStyle("-fx-font-size: 14px;");
 
-        // polja
-        TextArea notesArea = new TextArea();
+        // beleske
+        TextArea notesArea = new TextArea(seansa.getBeleske() != null ? seansa.getBeleske() : "");
         notesArea.setPromptText("Unesi beleške sa seanse...");
         notesArea.setPrefRowCount(8);
         notesArea.setPrefWidth(500);
         notesArea.getStyleClass().add("notes-area");
 
-        TextArea resultsArea = new TextArea();
-        resultsArea.setPromptText("Unesi rezultate testa...");
-        resultsArea.setPrefRowCount(4);
-        resultsArea.setPrefWidth(500);
-        resultsArea.getStyleClass().add("notes-area");
+        // lista testova
+        ListView<String> testList = new ListView<>();
+        testList.setPrefHeight(140);
+        testList.setPrefWidth(500);
 
-        // dugmad
+        PsiholoskiTestDAO testDAO = new PsiholoskiTestDAO();
+        List<PsiholoskiTest> tests = testDAO.getAll();
+
+        for (PsiholoskiTest test : tests) {
+            if (test.getSeansaId() == seansa.getSeansaId()) {
+                testList.getItems().add("• " + test.getNaziv() + " (" + test.getOblast() + "): " + test.getRezultat());
+            }
+        }
+
+        // dugmici:
         Button saveButton = new Button("💾 Sačuvaj");
         Button backButton = new Button("⬅️ Nazad");
         saveButton.setPrefWidth(150);
@@ -44,8 +60,19 @@ public class NotesView extends Application {
         HBox buttonBox = new HBox(20, saveButton, backButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        saveButton.setOnAction(e -> showAlert(Alert.AlertType.INFORMATION, "Beleške i testovi sačuvani!"));
+        saveButton.setOnAction(e -> {
+            // akcija - updatovanje notes
+            String noveBeleske = notesArea.getText().trim();
+            if (noveBeleske.isEmpty()) {
+                showAlert(Alert.AlertType.WARNING, "Beleške ne mogu biti prazne.");
+                return;
+            }
 
+            new app.dao.SeansaDAO().updateBeleske(seansa.getSeansaId(), noveBeleske);
+            showAlert(Alert.AlertType.INFORMATION, "Beleške su uspešno sačuvane.");
+        });
+
+        // back button
         backButton.setOnAction(e -> {
             try {
                 new SessionListView().start(new Stage());
@@ -55,14 +82,14 @@ public class NotesView extends Application {
             }
         });
 
-        // glavna kartica
+        // layout
         VBox card = new VBox(15,
                 header,
                 sessionLabel,
                 new Label("Beleške:"),
                 notesArea,
-                new Label("Test rezultati:"),
-                resultsArea,
+                new Label("Testovi u toku seanse:"),
+                testList,
                 buttonBox
         );
         card.setPadding(new Insets(30));
@@ -89,7 +116,4 @@ public class NotesView extends Application {
         alert.showAndWait();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

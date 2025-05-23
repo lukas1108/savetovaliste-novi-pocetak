@@ -8,7 +8,7 @@ public class DatabaseConnection {
     public static Connection connect() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/savetovalistenp";
         String user = "root";
-        String password = ""; // ako si stavio lozinku u phpMyAdmin, unesi ovde
+        String password = "";
         return DriverManager.getConnection(url, user, password);
     }
 }

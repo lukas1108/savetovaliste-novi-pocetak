@@ -17,7 +17,6 @@ public class App extends Application{
 
 
     public static void main(String[] args) {
-        launch();
 
         // provera konekcije sa bazom:
         try {
@@ -27,6 +26,7 @@ public class App extends Application{
             e.printStackTrace();
         }
 
+        launch();
 
     }
 }

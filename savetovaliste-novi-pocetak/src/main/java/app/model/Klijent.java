@@ -96,6 +96,6 @@ public class Klijent {
 
     @Override
     public String toString() {
-        return ime + " " + prezime;
+        return ime + " " + prezime + " – " + opisProblema + " (" + telefon + " | " + email + ")";
     }
 }

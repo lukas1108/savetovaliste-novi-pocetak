@@ -10,4 +10,5 @@ module artikli {
     exports app.start;
     exports app.model;
     exports app.dao;
+    exports app.test;
 }

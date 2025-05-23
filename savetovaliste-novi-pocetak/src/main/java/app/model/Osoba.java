@@ -196,6 +196,6 @@ public class Osoba {
 
     @Override
     public String toString() {
-        return ime + " " + prezime + " – " + oblastNaziv;
+        return ime + " " + prezime + " – " + oblastNaziv + " (" + telefon + " | " + email + ")";
     }
 }

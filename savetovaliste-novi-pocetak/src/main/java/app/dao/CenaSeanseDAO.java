@@ -8,9 +8,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CenaSeanseDAO {
+    // DAO = DATA ACCESS OBJECT
+
+    public void dodajCenuSeanse(java.sql.Date datumPromene, double novaCena) {
+        String sql = "{ CALL insert_cena_seanse(?, ?) }";
+
+        try (Connection conn = DatabaseConnection.connect();
+             CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setDate(1, datumPromene);
+            cs.setDouble(2, novaCena);
+            cs.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public CenaSeanse getById(int id) {
-        String sql = "SELECT * FROM CenaSeanse WHERE cena_id = ?";
+        String sql = "SELECT * FROM cena_seanse WHERE cena_id = ?";
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 

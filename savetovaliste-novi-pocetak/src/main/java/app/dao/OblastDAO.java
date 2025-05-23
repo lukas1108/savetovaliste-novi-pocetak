@@ -9,6 +9,34 @@ import java.util.List;
 
 public class OblastDAO {
 
+    public String getNazivById(int id) {
+        String sql = "SELECT naziv FROM oblast WHERE oblast_id = ?";
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getString("naziv");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Nepoznato";
+    }
+
+    public static int nadjiIliKreiraj(String naziv) throws SQLException {
+        String sql = "{ CALL nadji_ili_kreiraj_oblast(?, ?) }";
+
+        try (Connection conn = DatabaseConnection.connect();
+             CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setString(1, naziv.trim());
+            cs.registerOutParameter(2, Types.INTEGER);
+
+            cs.execute();
+
+            return cs.getInt(2);
+        }
+    }
+
     public Oblast getById(int id) {
         String sql = "SELECT * FROM oblast WHERE oblast_id = ?";
         try (Connection conn = DatabaseConnection.connect();

@@ -1,5 +1,7 @@
 package app.model;
 
+import app.dao.KlijentDAO;
+
 import java.sql.Time;
 import java.sql.Date;
 
@@ -11,8 +13,8 @@ public class Seansa {
     private String beleske;
     private int cenaId;
     private Integer objavaId;   // nullable
-    private Integer kandidatId; // nullable
     private int osobaId;
+    private Klijent klijent;   // novo polje za klijenta
 
     public int getSeansaId() {
         return seansaId;
@@ -70,14 +72,6 @@ public class Seansa {
         this.objavaId = objavaId;
     }
 
-    public Integer getKandidatId() {
-        return kandidatId;
-    }
-
-    public void setKandidatId(Integer kandidatId) {
-        this.kandidatId = kandidatId;
-    }
-
     public int getOsobaId() {
         return osobaId;
     }
@@ -86,8 +80,16 @@ public class Seansa {
         this.osobaId = osobaId;
     }
 
+    public Klijent getKlijent() {
+        return klijent;
+    }
+
+    public void setKlijent(Klijent klijent) {
+        this.klijent = klijent;
+    }
+
     @Override
     public String toString() {
-        return "Seansa " + seansaId + " - " + datum;
+        return "Seansa " + seansaId + ", " + klijent.getIme() + " " + klijent.getPrezime() + " (" + datum + ")";
     }
 }

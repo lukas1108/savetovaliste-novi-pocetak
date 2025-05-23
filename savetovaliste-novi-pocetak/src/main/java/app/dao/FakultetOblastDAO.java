@@ -9,9 +9,26 @@ import java.util.List;
 
 public class FakultetOblastDAO {
 
+    public boolean exists(FakultetOblast f) {
+        String sql = "SELECT 1 FROM fakultet_oblast WHERE fakultet_id = ? AND univerzitet_id = ? AND oblast_id = ?";
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, f.getFakultetId());
+            stmt.setInt(2, f.getUniverzitetId());
+            stmt.setInt(3, f.getOblastId());
+
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<FakultetOblast> getAll() {
         List<FakultetOblast> lista = new ArrayList<>();
-        String sql = "SELECT * FROM fakultet_univerzitet_oblast";
+        String sql = "SELECT * FROM fakultet_oblast";
 
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -32,15 +49,15 @@ public class FakultetOblastDAO {
     }
 
     public void insert(FakultetOblast f) {
-        String sql = "INSERT INTO fakultet_univerzitet_oblast (fakultet_id, univerzitet_id, oblast_id) VALUES (?, ?, ?)";
+        String sql = "{ CALL insert_fakultet_oblast(?, ?, ?) }";
         try (Connection conn = DatabaseConnection.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             CallableStatement cs = conn.prepareCall(sql)) {
 
-            stmt.setInt(1, f.getFakultetId());
-            stmt.setInt(2, f.getUniverzitetId());
-            stmt.setInt(3, f.getOblastId());
+            cs.setInt(1, f.getFakultetId());
+            cs.setInt(2, f.getUniverzitetId());
+            cs.setInt(3, f.getOblastId());
 
-            stmt.executeUpdate();
+            cs.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();

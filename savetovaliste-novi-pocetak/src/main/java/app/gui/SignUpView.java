@@ -1,7 +1,10 @@
 package app.gui;
 
-import app.dao.OsobaDAO;
+import app.dao.*;
+import app.model.CentarZaObuku;
+import app.model.FakultetOblast;
 import app.model.Osoba;
+import app.model.Supervizija;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,22 +19,29 @@ import javafx.animation.ScaleTransition;
 import javafx.util.Duration;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
 
 public class SignUpView extends Application {
 
     @Override
     public void start(Stage stage) {
+
         // logo
         Image logoImage = new Image(getClass().getResourceAsStream("/novi-pocetak-logo.png"));
         ImageView logoView = new ImageView(logoImage);
         logoView.setFitWidth(150);
         logoView.setPreserveRatio(true);
-
         VBox logoBox = new VBox(logoView);
         logoBox.setAlignment(Pos.CENTER);
 
-        // polja za unos
+        // combo box
+        ComboBox<String> tipOsobeCombo = new ComboBox<>();
+        tipOsobeCombo.getItems().addAll("kandidat", "psihoterapeut");
+
+        // polja:
+
         TextField imeField = new TextField();
         TextField prezimeField = new TextField();
         TextField jmbgField = new TextField();
@@ -49,21 +59,32 @@ public class SignUpView extends Application {
         ComboBox<String> stepenStudijaCombo = new ComboBox<>();
         stepenStudijaCombo.getItems().addAll("O", "M", "D");
 
+        Label datumSertifikacijeLabel = new Label("Datum sertifikacije:");
         DatePicker datumSertifikacijePicker = new DatePicker();
 
         TextField centarNazivField = new TextField();
-        TextField fakultetIdField = new TextField();
-        TextField univerzitetIdField = new TextField();
-        TextField supervizijaIdField = new TextField();
+        TextField fakultetNazivField = new TextField();
+        TextField univerzitetNazivField = new TextField();
+        TextField oblastNazivField = new TextField();
 
-        ComboBox<String> tipOsobeCombo = new ComboBox<>();
-        tipOsobeCombo.getItems().addAll("kandidat", "psihoterapeut");
+        ComboBox<Osoba> psihoterapeutComboBox = new ComboBox<>();
+        psihoterapeutComboBox.setPromptText("Odaberi supervizora");
 
-        TextField oblastIdField = new TextField();
+        Label centarLabel = new Label("* Centar:");
+        Label supervizijaLabel = new Label("* Supervizija ID:");
 
         PasswordField lozinkaField = new PasswordField();
         PasswordField confirmLozinkaField = new PasswordField();
 
+        // da budu uzi text boxovi
+        setMaxFieldWidths(200,
+                tipOsobeCombo, imeField, prezimeField, jmbgField, datumRodjenjaPicker,
+                polCombo, emailField, telefonField, ulicaField, brojField, opstinaField,
+                stepenStudijaCombo, datumSertifikacijePicker, fakultetNazivField,
+                univerzitetNazivField, oblastNazivField, lozinkaField,
+                confirmLozinkaField, centarNazivField, psihoterapeutComboBox
+        );
+        
         // layout za sva polja
         GridPane grid = new GridPane();
         grid.setVgap(10);
@@ -71,6 +92,10 @@ public class SignUpView extends Application {
         grid.setPadding(new Insets(20));
 
         int row = 0;
+
+        grid.add(new Label("* Registrujem se kao:"), 0, row);
+        grid.add(tipOsobeCombo, 1, row++);
+
         grid.add(new Label("* Ime:"), 0, row);
         grid.add(imeField, 1, row++);
 
@@ -104,32 +129,29 @@ public class SignUpView extends Application {
         grid.add(new Label("* Stepen studija:"), 0, row);
         grid.add(stepenStudijaCombo, 1, row++);
 
-        grid.add(new Label("Datum sertifikacije:"), 0, row);
-        grid.add(datumSertifikacijePicker, 1, row++);
+        grid.add(new Label("* Fakultet:"), 0, row);
+        grid.add(fakultetNazivField, 1, row++);
 
-        grid.add(new Label("* Centar ID:"), 0, row);
-        grid.add(centarNazivField, 1, row++);
+        grid.add(new Label("* Univerzitet:"), 0, row);
+        grid.add(univerzitetNazivField, 1, row++);
 
-        grid.add(new Label("* Fakultet ID:"), 0, row);
-        grid.add(fakultetIdField, 1, row++);
-
-        grid.add(new Label("* Univerzitet ID:"), 0, row);
-        grid.add(univerzitetIdField, 1, row++);
-
-        grid.add(new Label("* Supervizija ID:"), 0, row);
-        grid.add(supervizijaIdField, 1, row++);
-
-        grid.add(new Label("* Psihoterapeut/Kandidat:"), 0, row);
-        grid.add(tipOsobeCombo, 1, row++);
-
-        grid.add(new Label("* Oblast ID:"), 0, row);
-        grid.add(oblastIdField, 1, row++);
+        grid.add(new Label("* Oblast:"), 0, row);
+        grid.add(oblastNazivField, 1, row++);
 
         grid.add(new Label("* Lozinka:"), 0, row);
         grid.add(lozinkaField, 1, row++);
 
         grid.add(new Label("* Potvrdi lozinku:"), 0, row);
         grid.add(confirmLozinkaField, 1, row++);
+
+        grid.add(centarLabel, 0, row);
+        grid.add(centarNazivField, 1, row++);
+
+        grid.add(supervizijaLabel, 0, row);
+        grid.add(psihoterapeutComboBox, 1, row++);
+
+        grid.add(datumSertifikacijeLabel, 0, row);
+        grid.add(datumSertifikacijePicker, 1, row++);
 
         // dugmad
         Button signupButton = new Button("Registruj se");
@@ -158,6 +180,25 @@ public class SignUpView extends Application {
         fade.setToValue(1);
         fade.play();
 
+        // prolazak kroz sve osobe
+        List<Osoba> svi = new OsobaDAO().getAll();
+        for (Osoba o : svi) {
+            if ("psihoterapeut".equalsIgnoreCase(o.getTipOsobe())) {
+                psihoterapeutComboBox.getItems().add(o);
+            }
+        }
+
+        // vizibilnost u odnosu na to da li je kandidat ili psihoterapeut
+        tipOsobeCombo.setOnAction(e -> {
+            boolean jeKandidat = "kandidat".equalsIgnoreCase(tipOsobeCombo.getValue());
+            supervizijaLabel.setVisible(jeKandidat);
+            psihoterapeutComboBox.setVisible(jeKandidat);
+            centarLabel.setVisible(jeKandidat);
+            centarNazivField.setVisible(jeKandidat);
+            datumSertifikacijeLabel.setVisible(!jeKandidat);
+            datumSertifikacijePicker.setVisible(!jeKandidat);
+        });
+
         // akcije dugmadi
         backButton.setOnAction(e -> {
             try {
@@ -169,7 +210,10 @@ public class SignUpView extends Application {
         });
 
         signupButton.setOnAction(e -> {
-            // validacija polja
+
+            // VALIDACIJE PODATAKA:
+
+            // da li je sve popunjeno
             if (imeField.getText().isEmpty() || prezimeField.getText().isEmpty() || jmbgField.getText().isEmpty() ||
                     datumRodjenjaPicker.getValue() == null || polCombo.getValue() == null || emailField.getText().isEmpty() ||
                     lozinkaField.getText().isEmpty() || confirmLozinkaField.getText().isEmpty()) {
@@ -178,13 +222,95 @@ public class SignUpView extends Application {
                 return;
             }
 
+            String tip = tipOsobeCombo.getValue();
+            if (tip == null) {
+                showAlert(Alert.AlertType.ERROR, "Izaberite da li se registrujete kao kandidat ili psihoterapeut.");
+                return;
+            }
+
+            if ("kandidat".equalsIgnoreCase(tip)) {
+                if (centarNazivField.getText().trim().isEmpty() || psihoterapeutComboBox.getSelectionModel().isEmpty()) {
+                    showAlert(Alert.AlertType.ERROR, "Kandidat mora uneti naziv centra i odabrati psihoterapeuta.");
+                    return;
+                }
+            }
+
             if (!lozinkaField.getText().equals(confirmLozinkaField.getText())) {
                 showAlert(Alert.AlertType.ERROR, "Lozinke se ne poklapaju!");
                 return;
             }
 
+            // 🔐 dodatna validacija
+            if (!jmbgField.getText().matches("\\d{13}")) {
+                showAlert(Alert.AlertType.ERROR, "JMBG mora sadržati tačno 13 cifara.");
+                return;
+            }
+
+            if (!imeField.getText().matches("[\\p{L} ]+")) {
+                showAlert(Alert.AlertType.ERROR, "Ime sme sadržavati samo slova.");
+                return;
+            }
+
+            if (!prezimeField.getText().matches("[\\p{L} ]+")) {
+                showAlert(Alert.AlertType.ERROR, "Prezime sme sadržavati samo slova.");
+                return;
+            }
+
+            if (!ulicaField.getText().matches("[\\p{L} ]+")) {
+                showAlert(Alert.AlertType.ERROR, "Ulica sme sadržavati samo slova.");
+                return;
+            }
+
+            if (!fakultetNazivField.getText().matches("[\\p{L} ]+")) {
+                showAlert(Alert.AlertType.ERROR, "Fakultet sme sadržavati samo slova.");
+                return;
+            }
+
+            if (!univerzitetNazivField.getText().matches("[\\p{L} ]+")) {
+                showAlert(Alert.AlertType.ERROR, "Univerzitet sme sadržavati samo slova.");
+                return;
+            }
+
+            if (!oblastNazivField.getText().matches("[\\p{L} ]+")) {
+                showAlert(Alert.AlertType.ERROR, "Oblast sme sadržavati samo slova.");
+                return;
+            }
+
+            if (lozinkaField.getText().length() < 8) {
+                showAlert(Alert.AlertType.ERROR, "Lozinka mora imati najmanje 8 karaktera.");
+                return;
+            }
+
             // kreiranje objekta osobe
             Osoba osoba = new Osoba();
+
+            // uzmanje imena na osnovu ID-a
+            try {
+                int univerzitetId = UniverzitetDAO.nadjiIliKreiraj(univerzitetNazivField.getText().trim());
+                int fakultetId = FakultetDAO.nadjiIliKreiraj(fakultetNazivField.getText().trim(), univerzitetId);
+                int oblastId = OblastDAO.nadjiIliKreiraj(oblastNazivField.getText().trim());
+
+                osoba.setUniverzitetId(univerzitetId);
+                osoba.setFakultetId(fakultetId);
+                osoba.setOblastId(oblastId);
+
+                // povezivanje u tabeli fakultet_oblast
+                FakultetOblast fo = new FakultetOblast();
+                fo.setFakultetId(osoba.getFakultetId());
+                fo.setUniverzitetId(osoba.getUniverzitetId());
+                fo.setOblastId(osoba.getOblastId());
+
+                // ako ta kombinacija (fakultet-univerzitet-oblast) ne postoji, dodaj je
+                if (!new FakultetOblastDAO().exists(fo)) {
+                    new FakultetOblastDAO().insert(fo);
+                }
+
+            } catch (SQLException ex) {
+                showAlert(Alert.AlertType.ERROR, "Greška prilikom obrade fakulteta, univerziteta ili oblasti: " + ex.getMessage());
+                return;
+            }
+
+            // konacno postavljanje za objekat osobe
             osoba.setIme(imeField.getText());
             osoba.setPrezime(prezimeField.getText());
             osoba.setJmbg(jmbgField.getText());
@@ -196,29 +322,64 @@ public class SignUpView extends Application {
             osoba.setBroj(parseIntSafe(brojField.getText(), 0));
             osoba.setOpstina(opstinaField.getText());
             osoba.setStepenStudija(stepenStudijaCombo.getValue());
-            osoba.setDatumSertifikacije(datumSertifikacijePicker.getValue() == null ? null : Date.valueOf(datumSertifikacijePicker.getValue()));
-            osoba.setCentarId(parseIntSafeNullable(centarNazivField.getText()));
-            osoba.setFakultetId(parseIntSafe(fakultetIdField.getText(), -1));
-            osoba.setUniverzitetId(parseIntSafe(univerzitetIdField.getText(), -1));
-            osoba.setSupervizijaId(parseIntSafeNullable(supervizijaIdField.getText()));
-            osoba.setTipOsobe(tipOsobeCombo.getValue());
-            osoba.setOblastId(parseIntSafeNullable(oblastIdField.getText()));
-            osoba.setLozinka(lozinkaField.getText()); // obavezno hashirati pre cuvanja!
+            osoba.setTipOsobe(tip);
+            osoba.setLozinka(lozinkaField.getText()); // hashiraj u produkciji
 
-            // poziv metode za upis u bazu
-            boolean uspeh = OsobaDAO.add(osoba);
-            if (uspeh) {
-                showAlert(Alert.AlertType.INFORMATION, "Registracija uspešna!");
-                // idi na login ili zatvori
-                stage.close();
-                try {
-                    new LoginView().start(new Stage());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+            if ("psihoterapeut".equalsIgnoreCase(tip)) {
+                osoba.setDatumSertifikacije(datumSertifikacijePicker.getValue() == null ? null : Date.valueOf(datumSertifikacijePicker.getValue()));
             } else {
-                showAlert(Alert.AlertType.ERROR, "Došlo je do greške prilikom registracije. Proverite ponovo podatke");
+                osoba.setDatumSertifikacije(null); // kandidati ne popunjavaju
             }
+
+            if ("kandidat".equalsIgnoreCase(tip)) {
+                try {
+                    CentarZaObuku centar = CentarZaObukuDAO.nadjiIliKreirajCentar(
+                            centarNazivField.getText().trim(), "", "", "", 0, ""
+                    );
+                    osoba.setCentarId(centar.getCentarId());
+                } catch (SQLException ex) {
+                    showAlert(Alert.AlertType.ERROR, "Greska prilikom obrade centra: " + ex.getMessage());
+                    return;
+                }
+            }
+
+            // upis osobe bez supervizije_id
+            Integer kandidatId = OsobaDAO.addAndReturnId(osoba);
+            if (kandidatId == null) {
+                showAlert(Alert.AlertType.ERROR, "Greska prilikom registracije osobe.");
+                return;
+            }
+
+            // ako je kandidat, sada kreiraj superviziju
+            if ("kandidat".equalsIgnoreCase(tip)) {
+                Osoba psihoterapeut = psihoterapeutComboBox.getValue();
+
+                Supervizija s = new Supervizija();
+                s.setKandidatId(kandidatId);
+                s.setPsihoterapeutId(psihoterapeut.getId());
+                s.setPocetak(Date.valueOf(LocalDate.now()));
+                s.setKraj(Date.valueOf(LocalDate.now().plusMonths(6)));
+
+                Integer supervizijaId = new SupervizijaDAO().insertAndReturnId(s);
+                if (supervizijaId == null) {
+                    showAlert(Alert.AlertType.ERROR, "Greška prilikom kreiranja supervizije!");
+                    return;
+                }
+
+                boolean povezano = new OsobaDAO().updateSupervizijaId(kandidatId, supervizijaId);
+                if (!povezano) {
+                    showAlert(Alert.AlertType.ERROR, "Greška pri povezivanju supervizije sa osobom.");
+                    return;
+                }
+            }
+
+            showAlert(Alert.AlertType.INFORMATION, "Registracija uspešna!");
+            stage.close();
+            try {
+                new LoginView().start(new Stage());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                }
         });
     }
 
@@ -236,14 +397,6 @@ public class SignUpView extends Application {
         }
     }
 
-    private Integer parseIntSafeNullable(String s) {
-        try {
-            return (s == null || s.trim().isEmpty()) ? null : Integer.parseInt(s);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     private void addHoverAnimation(Button btn) {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), btn);
         btn.setOnMouseEntered(e -> {
@@ -258,7 +411,9 @@ public class SignUpView extends Application {
         });
     }
 
-    public static void main(String[] args) {
-        launch();
+    private void setMaxFieldWidths(double width, Control... controls) {
+        for (Control c : controls) {
+            c.setMaxWidth(width);
+        }
     }
 }

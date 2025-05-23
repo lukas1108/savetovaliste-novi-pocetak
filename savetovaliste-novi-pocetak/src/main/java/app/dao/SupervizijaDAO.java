@@ -9,6 +9,28 @@ import java.util.List;
 
 public class SupervizijaDAO {
 
+    public Integer insertAndReturnId(Supervizija s) {
+        String sql = "{ CALL insert_supervizija(?, ?, ?, ?, ?) }";
+
+        try (Connection conn = DatabaseConnection.connect();
+             CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setDate(1, s.getPocetak());
+            cs.setDate(2, s.getKraj());
+            cs.setInt(3, s.getPsihoterapeutId());
+            cs.setInt(4, s.getKandidatId());
+            cs.registerOutParameter(5, Types.INTEGER);
+
+            cs.execute();
+
+            return cs.getInt(5);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public Supervizija getById(int id) {
         String sql = "SELECT * FROM supervizija WHERE supervizija_id = ?";
         try (Connection conn = DatabaseConnection.connect();
